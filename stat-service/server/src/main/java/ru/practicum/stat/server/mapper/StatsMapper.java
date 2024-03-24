@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 @UtilityClass
 public class StatsMapper {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public EndpointHitDto toDto(EndpointHit endpointHit) {
         return EndpointHitDto.builder()
                 .app(endpointHit.getApp())
