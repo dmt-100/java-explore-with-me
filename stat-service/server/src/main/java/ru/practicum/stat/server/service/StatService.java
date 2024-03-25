@@ -10,6 +10,7 @@ import ru.practicum.stat.server.entity.EndpointHit;
 import ru.practicum.stat.server.mapper.StatsMapper;
 import ru.practicum.stat.server.repository.StatRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class StatService {
     StatRepository statRepository;
 
+    @Transactional
     public EndpointHitDto addHit(EndpointHitDto endpointHitDto) {
         EndpointHit entity = StatsMapper.toEntity(endpointHitDto);
         return StatsMapper.toDto(

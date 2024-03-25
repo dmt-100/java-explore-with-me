@@ -16,6 +16,3 @@ spring:
     url:               jdbc:postgresql://localhost:5432/stats_db
     username:          postgres
     password:          pass
-
-server:
-  port: 9090
