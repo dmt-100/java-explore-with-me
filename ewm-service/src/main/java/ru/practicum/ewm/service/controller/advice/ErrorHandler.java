@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.exception;
+package ru.practicum.ewm.service.controller.advice;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +7,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.ewm.service.controller.advice.exception.BadRequestException;
+import ru.practicum.ewm.service.controller.advice.exception.NotFoundException;
+import ru.practicum.ewm.service.controller.advice.exception.ValidationException;
 
 @RestControllerAdvice
 @Slf4j

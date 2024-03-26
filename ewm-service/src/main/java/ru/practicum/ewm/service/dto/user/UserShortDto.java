@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.dto.category;
+package ru.practicum.ewm.service.dto.user;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryDto {
+public class UserShortDto {
     Long id;
     String name;
 }
