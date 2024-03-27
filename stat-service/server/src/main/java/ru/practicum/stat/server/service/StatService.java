@@ -21,11 +21,9 @@ public class StatService {
     StatRepository statRepository;
 
     @Transactional
-    public EndpointHitDto addHit(EndpointHitDto endpointHitDto) {
+    public void addHit(EndpointHitDto endpointHitDto) {
         EndpointHit entity = StatsMapper.toEntity(endpointHitDto);
-        return StatsMapper.toDto(
-                statRepository.save(entity)
-        );
+        statRepository.save(entity);
     }
 
     public List<ViewStatsDto> getViewStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {

@@ -2,22 +2,31 @@ package ru.practicum.ewm.service.controller.publ;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
-import ru.practicum.ewm.service.dto.event.enums.AvailableValues;
+import ru.practicum.ewm.service.dto.event.enums.Sorted;
 import ru.practicum.ewm.service.service.publ.EventPublicService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static ru.practicum.ewm.service.util.DefaultValues.DATETIME_PATTERN;
 
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/events")
+@Slf4j
 public class EventPublicController {
-    private static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     EventPublicService eventPublicService;
 
     @GetMapping
@@ -25,18 +34,30 @@ public class EventPublicController {
                                         @RequestParam(required = false) List<Integer> categories,
                                         @RequestParam(required = false) Boolean paid,
                                         @RequestParam(required = false)
-                                            @DateTimeFormat(pattern = DATETIME_PATTERN) LocalDateTime rangeStart,
+                                        @DateTimeFormat(pattern = DATETIME_PATTERN) LocalDateTime rangeStart,
                                         @RequestParam(required = false)
-                                            @DateTimeFormat(pattern = DATETIME_PATTERN) LocalDateTime rangeEnd,
+                                        @DateTimeFormat(pattern = DATETIME_PATTERN) LocalDateTime rangeEnd,
                                         @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                        @RequestParam(required = false) AvailableValues sort,
+                                        @RequestParam(required = false) Sorted sorted,
                                         @RequestParam(defaultValue = "0") Integer from,
-                                        @RequestParam(defaultValue = "10") Integer size) {
-        return eventPublicService.getEvents(text,categories,paid,rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                                        @RequestParam(defaultValue = "10") Integer size,
+                                        HttpServletRequest request) {
+        log.info("Get events {} {} {} {} {} {} {}", text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sorted);
+        return eventPublicService.getEvents(
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sorted, from, size, request);
+    }
+
+    @SneakyThrows
+    @GetMapping(value = "/easter-egg", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> easterEgg() {
+        ClassPathResource img = new ClassPathResource("images/oh-no-5c0886.jpg");
+        byte[] bytes = StreamUtils.copyToByteArray(img.getInputStream());
+        return ResponseEntity.ok().body(bytes);
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getEventById(@PathVariable Long id) {
-        return eventPublicService.getEventById(id);
+    public EventFullDto getEventById(@PathVariable Long id, HttpServletRequest request) {
+        log.info("Get event with id {}", id);
+        return eventPublicService.getEventById(id, request);
     }
 }

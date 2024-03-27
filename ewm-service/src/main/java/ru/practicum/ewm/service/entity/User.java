@@ -22,6 +22,7 @@ public class User {
 
     interface UserShortDto {
         Long getId();
+
         String getName();
     }
 }

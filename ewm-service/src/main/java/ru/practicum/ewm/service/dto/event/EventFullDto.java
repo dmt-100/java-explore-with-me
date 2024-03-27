@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.service.dto.category.CategoryDto;
-import ru.practicum.ewm.service.dto.user.UserShortDto;
+import ru.practicum.ewm.service.dto.category.CategoryResponseDto;
 import ru.practicum.ewm.service.dto.event.enums.State;
+import ru.practicum.ewm.service.dto.user.UserShortDto;
 import ru.practicum.ewm.service.entity.Location;
 
 @Data
@@ -14,7 +14,7 @@ import ru.practicum.ewm.service.entity.Location;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventFullDto {
     String annotation;
-    CategoryDto category;
+    CategoryResponseDto category;
     Integer confirmedRequests;
     String createdOn;
     String description;
@@ -29,5 +29,5 @@ public class EventFullDto {
     State state;
     String title;
     @Builder.Default
-    Integer views = 0;
+    Long views = 0L;
 }
