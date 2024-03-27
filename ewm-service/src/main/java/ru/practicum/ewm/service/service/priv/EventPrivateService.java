@@ -37,8 +37,6 @@ import java.util.List;
 import static ru.practicum.ewm.service.dto.participation.enums.ParticipationStatus.*;
 import static ru.practicum.ewm.service.util.DefaultValues.*;
 
-;
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
