@@ -15,4 +15,11 @@ public class ErrorHandler {
         log.warn("Something goes wrong {}", e.getStackTrace(), e);
         return new ErrorResponse("Unhandled exception.");
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequest(final BadRequestException e) {
+        log.debug("Bad request {}", e.getStackTrace(), e);
+        return new ErrorResponse(e.getMessage());
+    }
 }

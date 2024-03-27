@@ -13,7 +13,6 @@ services:
       - POSTGRES_DB=stats_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
-      - TZ=Europe/Moscow
 
   stats-db:
     image: postgres:14-alpine
@@ -24,7 +23,6 @@ services:
       - POSTGRES_DB=stats_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
-      - TZ=Europe/Moscow
 
   ewm-service:
     build: ./ewm-service
@@ -39,7 +37,6 @@ services:
       - POSTGRES_DB=ewm_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
-      - TZ=Europe/Moscow
 
   ewm-db:
     image: postgres:14-alpine
@@ -50,4 +47,3 @@ services:
       - POSTGRES_DB=ewm_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
-      - TZ=Europe/Moscow

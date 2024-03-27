@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.stat.dto.EndpointHitDto;
 import ru.practicum.stat.dto.ViewStatsDto;
 import ru.practicum.stat.server.entity.EndpointHit;
+import ru.practicum.stat.server.exception.BadRequestException;
 import ru.practicum.stat.server.mapper.StatsMapper;
 import ru.practicum.stat.server.repository.StatRepository;
 
@@ -27,6 +28,9 @@ public class StatService {
     }
 
     public List<ViewStatsDto> getViewStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (start == null || end == null || end.isBefore(start)) {
+            throw new BadRequestException("incorrect date params");
+        }
         if (unique)
             return statRepository.getUniqueViewStats(start, end, uris);
         else

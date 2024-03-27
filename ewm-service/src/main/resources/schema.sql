@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS requests;
-DROP TABLE IF EXISTS events cascade ;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS compilations_events;
-DROP TABLE IF EXISTS compilations;
+DROP TABLE IF EXISTS requests cascade;
+DROP TABLE IF EXISTS events cascade;
+DROP TABLE IF EXISTS users cascade;
+DROP TABLE IF EXISTS categories cascade;
+DROP TABLE IF EXISTS compilations_events cascade;
+DROP TABLE IF EXISTS compilations cascade;
 
 CREATE TABLE IF NOT EXISTS users (
    id       BIGSERIAL PRIMARY KEY,
