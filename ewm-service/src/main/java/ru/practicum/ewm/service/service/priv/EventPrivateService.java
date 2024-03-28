@@ -40,6 +40,7 @@ import static ru.practicum.ewm.service.util.DefaultValues.*;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class EventPrivateService {
     private static final int MIN_HOURS_FOR_PUBLICATION = 2;
     EventRepository eventRepository;
@@ -53,6 +54,7 @@ public class EventPrivateService {
         return difference >= minHours;
     }
 
+    @Transactional
     public EventFullDto addNewEvent(Long userId, NewEventDto dto) {
         LocalDateTime eventDate = LocalDateTime.parse(dto.getEventDate(), DateTimeFormatter.ofPattern(DATETIME_PATTERN));
         if (!isEventDateCorrect(eventDate, MIN_HOURS_FOR_PUBLICATION)) {
@@ -116,6 +118,7 @@ public class EventPrivateService {
                 requestRepository.findAllByEventId(eventId));
     }
 
+    @Transactional
     public ParticipationUpdateResponse updateEventRequest(Long userId, Long eventId, ParticipationUpdateDto dto) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("no such user");

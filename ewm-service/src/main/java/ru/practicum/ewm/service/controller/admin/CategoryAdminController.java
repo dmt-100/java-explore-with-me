@@ -17,7 +17,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/admin/categories")
-@Validated
 @Slf4j
 public class CategoryAdminController {
     CategoryAdminService categoryAdminService;

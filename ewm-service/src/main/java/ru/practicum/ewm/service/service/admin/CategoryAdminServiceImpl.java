@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.controller.advice.exception.NotFoundException;
 import ru.practicum.ewm.service.controller.advice.exception.ValidationException;
 import ru.practicum.ewm.service.dto.category.CategoryRequestDto;
@@ -21,6 +22,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
     EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CategoryResponseDto addCategory(CategoryRequestDto dto) {
         if (categoryRepository.existsByName(dto.getName())) {
             throw new ValidationException("Category name already exist");
@@ -31,6 +33,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long catId) {
         if (!categoryRepository.existsById(catId)) {
             throw new NotFoundException("no such category");
@@ -42,6 +45,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
     }
 
     @Override
+    @Transactional
     public CategoryResponseDto patchCategory(Long catId, CategoryRequestDto dto) {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("no such category"));

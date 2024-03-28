@@ -47,14 +47,6 @@ public class EventPublicController {
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sorted, from, size, request);
     }
 
-    @SneakyThrows
-    @GetMapping(value = "/easter-egg", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> easterEgg() {
-        ClassPathResource img = new ClassPathResource("images/oh-no-5c0886.jpg");
-        byte[] bytes = StreamUtils.copyToByteArray(img.getInputStream());
-        return ResponseEntity.ok().body(bytes);
-    }
-
     @GetMapping("/{id}")
     public EventFullDto getEventById(@PathVariable Long id, HttpServletRequest request) {
         log.info("Get event with id {}", id);

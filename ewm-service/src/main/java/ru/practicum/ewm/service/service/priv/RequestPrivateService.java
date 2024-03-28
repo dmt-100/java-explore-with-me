@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.controller.advice.exception.NotFoundException;
 import ru.practicum.ewm.service.controller.advice.exception.ValidationException;
 import ru.practicum.ewm.service.dto.event.enums.State;
@@ -23,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class RequestPrivateService {
     RequestRepository requestRepository;
     EventRepository eventRepository;
@@ -32,6 +34,7 @@ public class RequestPrivateService {
         return RequestMapper.toDtoList(requestRepository.findAllByRequesterId(userId));
     }
 
+    @Transactional
     public ParticipationResponseDto addNewRequest(Long userId, Long eventId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("no such user"));
@@ -66,6 +69,7 @@ public class RequestPrivateService {
         return RequestMapper.toDto(requestRepository.save(request));
     }
 
+    @Transactional
     public ParticipationResponseDto cancelRequest(Long userId, Long requestId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("no such user");

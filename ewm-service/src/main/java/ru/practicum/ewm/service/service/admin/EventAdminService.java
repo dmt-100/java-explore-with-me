@@ -36,6 +36,7 @@ public class EventAdminService {
     EventRepository eventRepository;
     StatsService statsService;
 
+    @Transactional(readOnly = true)
     public List<EventFullDto> searchEvents(List<Long> users,
                                            State states,
                                            List<Long> categories,

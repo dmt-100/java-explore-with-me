@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.controller.advice.exception.NotFoundException;
 import ru.practicum.ewm.service.dto.category.CategoryResponseDto;
 import ru.practicum.ewm.service.entity.Category;
@@ -16,6 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class CategoryPublicServiceImpl implements CategoryPublicService {
     CategoryRepository categoryRepository;
 

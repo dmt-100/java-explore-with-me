@@ -19,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/admin/users")
-@Validated
 @Slf4j
 public class UserAdminController {
     UserAdminService userAdminService;

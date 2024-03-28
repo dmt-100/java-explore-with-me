@@ -15,7 +15,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @RequestMapping("/compilations")
-@Transactional(readOnly = true)
 @Slf4j
 public class CompilationsPublicController {
     CompilationPublicService compilationsService;

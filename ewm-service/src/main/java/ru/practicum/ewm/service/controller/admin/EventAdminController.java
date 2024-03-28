@@ -22,7 +22,6 @@ import static ru.practicum.ewm.service.util.DefaultValues.DATETIME_PATTERN;
 @RequestMapping("/admin/events")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Slf4j
 public class EventAdminController {
     EventAdminService eventService;
@@ -42,7 +41,6 @@ public class EventAdminController {
     }
 
     @PatchMapping("/{eventId}")
-    @Transactional
     public EventFullDto confirmOrRejectEvent(@PathVariable Long eventId,
                                              @Valid @RequestBody UpdateEventAdminRequest request) {
         log.info("Confirm Or Reject Event {} {}", eventId, request);
