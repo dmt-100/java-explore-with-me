@@ -1,22 +1,20 @@
 package ru.practicum.ewm.service.util;
 
 import lombok.experimental.UtilityClass;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 import ru.practicum.ewm.service.controller.advice.exception.BadRequestException;
 import ru.practicum.ewm.service.dto.event.enums.State;
 import ru.practicum.ewm.service.entity.Event;
 
 import javax.persistence.criteria.*;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Set;
 
 @UtilityClass
 public class DefaultValues {
@@ -27,14 +25,18 @@ public class DefaultValues {
     }
 
     public static String[] getNullPropertyNames(Object source) {
-        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(source.getClass());
-        return Stream.of(propertyDescriptors)
-                .map(PropertyDescriptor::getName)
-                .filter(propertyName -> {
-                    Method getter = ReflectionUtils.findMethod(source.getClass(), "get" + StringUtils.capitalize(propertyName));
-                    return getter != null && ReflectionUtils.invokeMethod(getter, source) == null;
-                })
-                .toArray(String[]::new);
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for(java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) {
+                emptyNames.add(pd.getName());
+            }
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
     }
 
     public static Specification<Event> createEventSpecification(String text, List<Integer> categories,

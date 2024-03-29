@@ -1,10 +1,15 @@
 package ru.practicum.stat.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -15,12 +20,28 @@ public class BaseClient {
         this.rest = rest;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(BaseClient.class);
+
     private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
         if (response.getStatusCode().is2xxSuccessful()) {
             return response;
         }
 
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
+
+        if (response.getStatusCode().is4xxClientError()) {
+            logger.error("Клиентская ошибка: Статус код = {}, Тело ответа = {}", response.getStatusCode(), response.getBody());
+
+            String errorMessage = String.format("Произошла ошибка на стороне клиента. Пожалуйста, проверьте ваш запрос. Статус код: %s", response.getStatusCode());
+            return responseBuilder.body(errorMessage);
+        }
+
+        if (response.getStatusCode().is5xxServerError()) {
+            logger.error("Серверная ошибка: Статус код = {}, Тело ответа = {}", response.getStatusCode(), response.getBody());
+
+            String errorMessage = "На сервере произошла ошибка. Мы работаем над ее устранением. Пожалуйста, попробуйте позже.";
+            return responseBuilder.body(errorMessage);
+        }
 
         if (response.hasBody()) {
             return responseBuilder.body(response.getBody());
@@ -48,7 +69,15 @@ public class BaseClient {
                 statsServerResponse = rest.exchange(path, method, requestEntity, Object.class);
             }
         } catch (HttpStatusCodeException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+            String errorResponseBody = new String(e.getResponseBodyAsByteArray(), StandardCharsets.UTF_8);
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode errorResponse = mapper.createObjectNode();
+            errorResponse.put("error", errorResponseBody);
+            errorResponse.put("status", e.getStatusCode().value());
+            errorResponse.put("message", e.getStatusText());
+
+            return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
         }
         return prepareGatewayResponse(statsServerResponse);
     }

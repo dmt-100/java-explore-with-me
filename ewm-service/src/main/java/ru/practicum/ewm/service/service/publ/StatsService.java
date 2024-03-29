@@ -39,8 +39,9 @@ public class StatsService {
                 .min(LocalDateTime::compareTo)
                 .get();
 
-        List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
-        List<String> uris = ids.stream().map(id -> String.format("/events/%d", id)).collect(Collectors.toList());
+        List<String> uris = events.stream()
+                .map(event -> String.format("/events/%d", event.getId()))
+                .collect(Collectors.toList());
 
         ResponseEntity<Object> response = statClient.getStats(
                 startDateForAll,

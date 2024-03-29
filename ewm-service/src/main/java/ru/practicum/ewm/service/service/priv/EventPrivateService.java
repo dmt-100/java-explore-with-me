@@ -77,19 +77,14 @@ public class EventPrivateService {
     }
 
     public EventFullDto getEventByEventId(Long userId, Long eventId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("no such user");
-        }
-        Event event = getEventIfExist(eventId);
+        Event event = getVerifiedEventForUser(userId, eventId);
         return EventMapper.toDto(event);
     }
 
     @Transactional
     public EventFullDto patchEvent(Long userId, Long eventId, UpdateEventUserRequest dto) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("no such user");
-        }
-        Event event = getEventIfExist(eventId);
+        Event event = getVerifiedEventForUser(userId, eventId);
+
         if (event.getState().equals(State.PUBLISHED)) {
             throw new ValidationException("event is already published");
         }
@@ -110,35 +105,40 @@ public class EventPrivateService {
     }
 
     public List<ParticipationResponseDto> getRequestsInUserEvent(Long userId, Long eventId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("no such user");
-        }
-        getEventIfExist(eventId);
+        getVerifiedEventForUser(userId, eventId);
         return RequestMapper.toDtoList(
                 requestRepository.findAllByEventId(eventId));
     }
 
     @Transactional
     public ParticipationUpdateResponse updateEventRequest(Long userId, Long eventId, ParticipationUpdateDto dto) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("no such user");
-        }
-        Event event = getEventIfExist(eventId);
+        // Получение и проверка события
+        Event event = getVerifiedEventForUser(userId, eventId);
         Integer participantLimit = event.getParticipantLimit();
+
+        // Проверка на достижение лимита участников
         if (event.getConfirmedRequests().equals(participantLimit)) {
             throw new ValidationException("participant limit reached");
         }
+
+        // Если модерация запросов не требуется, возвращаем пустой ответ
         if (participantLimit == 0 || !event.getRequestModeration()) {
             return new ParticipationUpdateResponse();
         }
+
+        // Обработка запросов на участие
         List<Request> requests = requestRepository.findAllById(dto.getRequestIds());
         List<Request> confirmedRequests = new ArrayList<>();
         List<Request> rejectedRequests = new ArrayList<>();
         requests.forEach(r -> {
             int freePoints = participantLimit - event.getConfirmedRequests();
+
+            // Проверка статуса запроса
             if (!r.getStatus().equals(PENDING)) {
                 throw new ValidationException("request must have pending status");
             }
+
+            // Решение о подтверждении или отклонении запроса
             if (freePoints > 0) {
                 if (dto.getStatus().equals(CONFIRMED)) {
                     r.setStatus(CONFIRMED);
@@ -153,14 +153,21 @@ public class EventPrivateService {
                 rejectedRequests.add(r);
             }
         });
+        // Сохранение изменений в событии
         eventRepository.saveAndFlush(event);
+
+        // Подготовка ответа
         List<ParticipationResponseDto> confirmedDto = RequestMapper.toDtoList(confirmedRequests);
         List<ParticipationResponseDto> rejectedDto = RequestMapper.toDtoList(rejectedRequests);
         return new ParticipationUpdateResponse(confirmedDto, rejectedDto);
     }
 
-    private Event getEventIfExist(Long eventId) {
-        return eventRepository.findById(eventId)
+    private Event getVerifiedEventForUser(Long userId, Long eventId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("no such user");
+        }
+        Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("no such event"));
+        return event;
     }
 }

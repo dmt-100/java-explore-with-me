@@ -67,11 +67,11 @@ public class EventAdminService {
                 throw new ValidationException("Event date must be later for hour than publication date");
             }
         }
-        if (!event.getState().equals(State.PENDING)) {
+        if (event.getState() != State.PENDING) {
             throw new ValidationException("State must be PENDING");
         }
         BeanUtils.copyProperties(request, event, getNullPropertyNames(request));
-        if (request.getStateAction() != null && request.getStateAction().equals(StateAction.PUBLISH_EVENT)) {
+        if (request.getStateAction() != null && request.getStateAction() == StateAction.PUBLISH_EVENT) {
             event.setState(State.PUBLISHED);
             return EventMapper.toDto(event);
         }
