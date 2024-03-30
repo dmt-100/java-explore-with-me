@@ -73,4 +73,10 @@ public class EventPrivateController {
         log.info("Update event request userId {}, eventId {}, dto {}", userId, eventId, dto);
         return service.updateEventRequest(userId, eventId, dto);
     }
+
+    @GetMapping("/returned")
+    public List<EventFullDto> getReturnedEvents(@PathVariable @NotNull Long userId) {
+        log.info("Get returned events for user {}", userId);
+        return service.getReturnedEvents(userId);
+    }
 }

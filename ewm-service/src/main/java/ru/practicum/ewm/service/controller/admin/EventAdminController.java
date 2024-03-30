@@ -45,4 +45,17 @@ public class EventAdminController {
         log.info("Confirm Or Reject Event {} {}", eventId, request);
         return eventService.confirmOrRejectEvent(eventId, request);
     }
+
+    @GetMapping("/pending")
+    public List<EventFullDto> getAllPendingEvents() {
+        log.info("get all pending events");
+        return eventService.getAllPendingEvents();
+    }
+
+    @PatchMapping("/return/{eventId}")
+    public EventFullDto sendBackForChange(@PathVariable Long eventId,
+                                          @RequestBody String comment) {
+        log.info("send back to change {} {}", eventId, comment);
+        return eventService.sendBackForChange(eventId, comment);
+    }
 }

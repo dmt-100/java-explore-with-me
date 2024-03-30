@@ -38,6 +38,7 @@ public class EventMapper {
                 .requestModeration(event.getRequestModeration())
                 .category(CategoryMapper.toDto(event.getCategory()))
                 .annotation(event.getAnnotation())
+                .adminComment(event.getAdminComment())
                 .build();
     }
 
