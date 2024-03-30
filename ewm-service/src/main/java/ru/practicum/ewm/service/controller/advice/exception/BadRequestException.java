@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.exception;
+package ru.practicum.ewm.service.controller.advice.exception;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {
