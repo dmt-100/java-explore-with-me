@@ -2,6 +2,7 @@ package ru.practicum.ewm.service.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.lang.Nullable;
 import ru.practicum.ewm.service.dto.event.enums.State;
 
 import javax.persistence.*;
@@ -47,6 +48,9 @@ public class Event {
     @Builder.Default
     State state = State.PENDING;
     String title;
+    @Column(name = "admin_comment")
+    @Nullable
+    String adminComment;
 
     @PrePersist
     public void prePersist() {

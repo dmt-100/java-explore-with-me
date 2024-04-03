@@ -32,6 +32,7 @@ import static ru.practicum.ewm.service.util.DefaultValues.*;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class EventAdminService {
     EventRepository eventRepository;
     StatsService statsService;
@@ -76,6 +77,21 @@ public class EventAdminService {
             return EventMapper.toDto(event);
         }
         event.setState(State.CANCELED);
+        return EventMapper.toDto(event);
+    }
+
+    public List<EventFullDto> getAllPendingEvents() {
+        return EventMapper.toDtoList(
+                eventRepository.findAllByStateIsOrderByCreatedOn(State.PENDING)
+        );
+    }
+
+    @Transactional
+    public EventFullDto sendBackForChange(Long eventId, String comment) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("no such event"));
+        event.setAdminComment(comment);
+        event.setState(State.RETURNED_FOR_CHANGE);
         return EventMapper.toDto(event);
     }
 }

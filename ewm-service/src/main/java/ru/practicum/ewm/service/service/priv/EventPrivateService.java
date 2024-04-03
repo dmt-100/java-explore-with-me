@@ -100,6 +100,7 @@ public class EventPrivateService {
         event.setState(State.PENDING);
         if (dto.getStateAction() != null && dto.getStateAction().equals(StateAction.CANCEL_REVIEW))
             event.setState(State.CANCELED);
+        event.setAdminComment("");
         BeanUtils.copyProperties(dto, event, getNullPropertyNames(dto));
         return EventMapper.toDto(event);
     }
@@ -169,5 +170,11 @@ public class EventPrivateService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("no such event"));
         return event;
+    }
+
+    public List<EventFullDto> getReturnedEvents(Long userId) {
+        return EventMapper.toDtoList(
+                eventRepository.findAllByInitiatorIdAndStateIs(userId, State.RETURNED_FOR_CHANGE)
+        );
     }
 }
